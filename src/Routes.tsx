@@ -1,40 +1,25 @@
 import React from 'react';
+import { User } from 'firebase/auth';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { SignInPage } from './auth';
+import { SignInPage, PrivateRoute } from './auth';
 import { CreateGroupsPage, GroupPage, GroupsListPage } from './groups';
 import { NavBar } from './navigation';
 
-interface RouteProp {
-  path: string;
-  Component: () => JSX.Element;
+interface AppRoutesProps {
+  user: User | null;
+  isLoading: boolean;
 }
-const routes: RouteProp[] = [
-  {
-    path: '/',
-    Component: GroupsListPage,
-  },
-  {
-    path: '/groups/:id',
-    Component: GroupPage,
-  },
-  {
-    path: '/sign-in',
-    Component: SignInPage,
-  },
-  {
-    path: '/create-group',
-    Component: CreateGroupsPage,
-  },
-];
-
-export const AppRoutes = () => {
+export const AppRoutes = ({ user, isLoading }: AppRoutesProps) => {
   return (
     <Router>
-      <NavBar />
+      <NavBar user={user} />
       <Routes>
-        {routes.map((route, index) => (
-          <Route key={index} path={route.path} element={<route.Component />} />
-        ))}
+        <Route element={<PrivateRoute isAuthed={!!user} isLoading={isLoading} />}>
+          <Route path="/" element={<GroupsListPage />} />
+          <Route path="/groups/:id" element={<GroupPage />} />
+          <Route path="/create-group" element={<CreateGroupsPage />} />
+        </Route>
+        <Route path="/sign-in" element={<SignInPage />} />
       </Routes>
     </Router>
   );
