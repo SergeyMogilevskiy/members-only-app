@@ -1,0 +1,1 @@
+export { postWithCredential } from './postWithCredential';
