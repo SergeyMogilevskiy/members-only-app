@@ -10,12 +10,13 @@ export function useUserGroups() {
     async function loadUserGroups() {
       const auth = getAuth();
       const user = auth.currentUser;
+
       if (!user) {
         setUserGroups([]);
         setIsLoading(false);
         return;
       }
-      console.log(user.uid);
+
       const groups = await fetch(`/users/${user.uid}/groups`, {
         headers: {
           AuthToken: await user.getIdToken(),
@@ -23,7 +24,6 @@ export function useUserGroups() {
       }).then<Group[]>((response) => response.json());
       setUserGroups(groups);
       setIsLoading(false);
-      console.log('asdasdda', groups);
     }
 
     loadUserGroups();
